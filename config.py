@@ -12,8 +12,8 @@ PORT_PROFILES  = {
                     "full":   "1-65535",
                     "common": "1-1024",
                 }
-THREAD_COUNT   = int(os.getenv("THREAD_COUNT", 100))
-TIMEOUT        = float(os.getenv("TIMEOUT", 1.0))
+THREAD_COUNT   = int(os.getenv("THREAD_COUNT", "100"))
+TIMEOUT        = float(os.getenv("TIMEOUT", "1.0"))
 OUTPUT_DIR     = os.getenv("OUTPUT_DIR", "results")
 DB_PATH        = os.getenv("DB_PATH", "vuln_db.sqlite")
 
