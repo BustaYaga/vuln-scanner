@@ -5,6 +5,16 @@ from models import ScanResult
 
 console = Console()
 
+def severity_colour(severity: str) -> str:
+    colours = {
+        "CRITICAL": "bold red",
+        "HIGH":     "red",
+        "MEDIUM":   "yellow",
+        "LOW":      "green",
+        "NONE":     "white"
+    }
+    return colours.get(severity, "white")
+
 def print_results(scan_result: ScanResult) -> None:
     # print header
     console.print(f"\n[bold]Target:[/bold] {scan_result.target}")
@@ -39,13 +49,3 @@ def print_results(scan_result: ScanResult) -> None:
     console.print(table)
     console.print(f"\n[bold]Open ports:[/bold] {len(scan_result.open_ports)}")
     console.print(f"[bold]Total CVEs:[/bold] {scan_result.total_cves}\n")
-
-def severity_colour(severity: str) -> str:
-    colours = {
-        "CRITICAL": "bold red",
-        "HIGH":     "red",
-        "MEDIUM":   "yellow",
-        "LOW":      "green",
-        "NONE":     "white"
-    }
-    return colours.get(severity, "white")
