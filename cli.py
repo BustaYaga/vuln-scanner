@@ -4,6 +4,7 @@ from rich.console import Console
 import config
 from models import ScanResult
 from scanner.port_scanner import scan_port, parse_ports
+from scanner.service_detector import detect_service
 from reporters.terminal import print_results
 
 
@@ -40,6 +41,7 @@ def main():
     for port in ports_to_scan:
         result = scan_port(args.target, port, timeout=args.timeout or config.TIMEOUT)
         if result:
+            result.service_info = detect_service(args.target, port, timeout=args.timeout or config.TIMEOUT)
             scan_result.port_results.append(result)
 
     # print results to terminal
@@ -47,4 +49,4 @@ def main():
     
     
 if __name__ == "__main__":
-    main()    
+    main()

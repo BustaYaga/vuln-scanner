@@ -29,3 +29,30 @@ DB_PATH        = os.getenv("DB_PATH", "vuln_db.sqlite")
 #2375,2376,2379,6443,9090,3100,8161,15672,9000 MONITORING & DEVOPS PORTS
 #500,1194,1723,4500,51820,8291 SECURITY & VPN PORTS
 #389,515,631,9100 PRINTING & DIRECTORY PORTS
+BANNER_PATTERNS = [
+    (r"SSH-[\d.]+-(.+)",          "SSH"),
+    (r"220[ -].*FTP",             "FTP"),
+    (r"220 .* ESMTP",             "SMTP"),
+    (r"HTTP/[\d.]+",              "HTTP"),
+    (r"RFB [\d.]+",               "VNC"),
+]  
+
+PORT_SERVICE_MAP = {
+    21:   ("FTP",        ""),
+    22:   ("SSH",        ""),
+    23:   ("Telnet",     ""),
+    25:   ("SMTP",       ""),
+    53:   ("DNS",        ""),
+    80:   ("HTTP",       ""),
+    110:  ("POP3",       ""),
+    135:  ("RPC",        ""),
+    139:  ("NetBIOS",    ""),
+    143:  ("IMAP",       ""),
+    443:  ("HTTPS",      ""),
+    445:  ("SMB",        ""),
+    3306: ("MySQL",      ""),
+    3389: ("RDP",        ""),
+    5432: ("PostgreSQL", ""),
+    6379: ("Redis",      ""),
+    8080: ("HTTP-Alt",   ""),
+}
