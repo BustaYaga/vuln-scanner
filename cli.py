@@ -5,6 +5,8 @@ import config
 from models import ScanResult
 from scanner.port_scanner import scan_port, parse_ports
 from scanner.service_detector import detect_service
+from scanner.cve_mapper import map_cves
+from scanner.cache import init_cache
 from reporters.terminal import print_results
 
 
@@ -35,13 +37,15 @@ def main():
     scan_result = ScanResult(target=args.target)
     console = Console()
     
-    console.print(f"[dim]Timeout: {args.timeout or config.TIMEOUT}s | Threads: {args.threads or config.THREAD_COUNT}[/dim]\n")
+    console.print(f"[dim]Timeout: {args.timeout or config.TIMEOUT}s | Threads: {args.threads or config.THREAD_COUNT}[/dim]\n") #Show that scan started
     console.print(f"\n[bold cyan]Scanning {args.target} — {len(ports_to_scan)} ports...[/bold cyan]\n")
 
-    for port in ports_to_scan:
+    for port in ports_to_scan: #Actual scan loop
         result = scan_port(args.target, port, timeout=args.timeout or config.TIMEOUT)
-        if result:
+        if result: # Service detection logic
             result.service_info = detect_service(args.target, port, timeout=args.timeout or config.TIMEOUT)
+            if result.service_info:
+                result.cve_entries = map_cves(result.service_info)
             scan_result.port_results.append(result)
 
     # print results to terminal
@@ -49,4 +53,5 @@ def main():
     
     
 if __name__ == "__main__":
+    init_cache()
     main()

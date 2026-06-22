@@ -3,6 +3,9 @@ import os
 
 load_dotenv()   # reads .env file and loads vars into environment
 
+#-----------------------------Global-Configuration-----------------------------------------#
+
+CACHE_EXPIRY_DAYS = 7   # re-query NVD after 7 days
 NVD_API_KEY    = os.getenv("NVD_API_KEY", "") #if na then second arg is default
 DEFAULT_PORTS  = [21,22,23,25,53,80,110,135,139,143,443,445,3389,8080]
 PORT_PROFILES  = {
@@ -18,7 +21,8 @@ OUTPUT_DIR     = os.getenv("OUTPUT_DIR", "results")
 DB_PATH        = os.getenv("DB_PATH", "vuln_db.sqlite")
 
 
-#--------------------------Full list of ports for reference: ------------------------------#
+#--------------------------Full-list-of-ports-for-reference:-------------------------------#
+
 #80,443,8080,8443,8008,3000,5000 WEB PORTS
 #22,23,3389,5900,5901,4444 REMOTE ACCESS PORTS
 #53,88,135,137,138,139,389,445,464,636,3268,3269,5985,5986,49152-65535 AD PORTS
@@ -29,6 +33,9 @@ DB_PATH        = os.getenv("DB_PATH", "vuln_db.sqlite")
 #2375,2376,2379,6443,9090,3100,8161,15672,9000 MONITORING & DEVOPS PORTS
 #500,1194,1723,4500,51820,8291 SECURITY & VPN PORTS
 #389,515,631,9100 PRINTING & DIRECTORY PORTS
+
+#----------------------------------Service-Detector-----------------------------------------#
+
 BANNER_PATTERNS = [
     (r"SSH-[\d.]+-(.+)",          "SSH"),
     (r"220[ -].*FTP",             "FTP"),
@@ -36,7 +43,6 @@ BANNER_PATTERNS = [
     (r"HTTP/[\d.]+",              "HTTP"),
     (r"RFB [\d.]+",               "VNC"),
 ]  
-
 PORT_SERVICE_MAP = {
     21:   ("FTP",        ""),
     22:   ("SSH",        ""),
@@ -55,4 +61,20 @@ PORT_SERVICE_MAP = {
     5432: ("PostgreSQL", ""),
     6379: ("Redis",      ""),
     8080: ("HTTP-Alt",   ""),
+}
+
+#-------------------------------------CVE-Mapper-------------------------------------------#
+
+CPE_MAP = {
+    "ssh":        "cpe:2.3:a:openbsd:openssh",
+    "apache":     "cpe:2.3:a:apache:http_server",
+    "nginx":      "cpe:2.3:a:nginx:nginx",
+    "ftp":        "cpe:2.3:a:microsoft:ftp_service",
+    "smtp":       "cpe:2.3:a:postfix:postfix",
+    "mysql":      "cpe:2.3:a:mysql:mysql",
+    "rdp":        "cpe:2.3:a:microsoft:remote_desktop_protocol",
+    "smb":        "cpe:2.3:a:microsoft:smb",
+    "rpc":        "cpe:2.3:a:microsoft:rpc",
+    "postgresql": "cpe:2.3:a:postgresql:postgresql",
+    "redis":      "cpe:2.3:a:redis:redis",
 }
