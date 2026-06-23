@@ -57,7 +57,7 @@ def main():
                 args.target, port,
                 timeout=args.timeout or config.TIMEOUT,
                 debug=debug
-            )
+        )
         if result.service_info:
             result.cve_entries = map_cves(result.service_info)
         scan_result.port_results.append(result)
