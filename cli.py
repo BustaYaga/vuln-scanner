@@ -8,6 +8,7 @@ from scanner.service_detector import detect_service
 from scanner.cve_mapper import map_cves
 from scanner.cache import init_cache
 from reporters.terminal import print_results
+from scanner.web_fingerprinter import fingerprint_web
 
 
 parser = argparse.ArgumentParser(description="Vuln-Scanner v0.1 (Under development) ~ BustaYaga ")
@@ -19,7 +20,7 @@ parser.add_argument("--timeout", "-t", type=float)
 parser.add_argument("--threads", "-T", type=int)
 parser.add_argument("--output",  "-o", choices=["json","html","csv"])
 parser.add_argument("--debug", "-d", action="store_true", help="Enable debug output")
-
+parser.add_argument("--web", "-w", action="store_true", help="Enable web application fingerprinting on HTTP/HTTPS ports")
 
 def main():
     args = parser.parse_args()
@@ -57,12 +58,26 @@ def main():
                 timeout=args.timeout or config.TIMEOUT,
                 debug=debug
             )
-        if result and result.service_info:
-            result.cve_entries = map_cves(result.service_info)
-        if result:
-            scan_result.port_results.append(result)
+            if result.service_info:
+                result.cve_entries = map_cves(result.service_info)
+        
+            # web fingerprinting — only on HTTP ports if --web flag set
+            if args.web and port in (config.HTTP_PORTS | config.HTTPS_PORTS):
+                result.web_fingerprint = fingerprint_web(
+                    args.target, port,
+                    timeout=args.timeout or config.TIMEOUT
+                )
+                # map CVEs for the web app too
+                if result.web_fingerprint and result.web_fingerprint.version:
+                    # build a temporary ServiceInfo to reuse map_cves
+                    from models import ServiceInfo
+                    web_service = ServiceInfo(
+                        service_name=result.web_fingerprint.app_name,
+                        version=result.web_fingerprint.version
+                    )
+                    result.web_fingerprint.cves = map_cves(web_service)
 
-    # print results to terminal
+            scan_result.port_results.append(result)
     print_results(scan_result)
     
     

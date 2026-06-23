@@ -21,6 +21,7 @@ class PortResult:
     state: str
     service_info: ServiceInfo | None = None
     cve_entries: list[CVEEntry] = field(default_factory=list)
+    web_fingerprint: WebFingerprint | None = None
 
     @property
     def has_cves(self) -> bool:
@@ -58,3 +59,11 @@ class ScanResult: # Represents scan results | Top level container
     @property
     def total_cves(self) -> int:
         return sum(len(p.cve_entries) for p in self.port_results)
+        
+@dataclass
+class WebFingerprint:
+    app_name: str          # "WordPress"
+    version: str           # "6.1.1" or "" if unknown
+    confidence: str        # "HIGH" / "MEDIUM" / "LOW"
+    evidence: str          # what gave it away e.g. "/wp-login.php returned 200"
+    cves: list[CVEEntry] = field(default_factory=list)    

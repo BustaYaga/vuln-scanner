@@ -49,3 +49,30 @@ def print_results(scan_result: ScanResult) -> None:
     console.print(table)
     console.print(f"\n[bold]Open ports:[/bold] {len(scan_result.open_ports)}")
     console.print(f"[bold]Total CVEs:[/bold] {scan_result.total_cves}\n")
+    
+def print_web_findings(scan_result: ScanResult) -> None:
+    web_ports = [p for p in scan_result.open_ports if p.web_fingerprint]
+    if not web_ports:
+        return
+
+    console.print("\n[bold cyan]Web Application Fingerprints[/bold cyan]\n")
+    table = Table(box=box.ROUNDED)
+    table.add_column("Port",       style="cyan")
+    table.add_column("App",        style="green")
+    table.add_column("Version",    style="white")
+    table.add_column("Confidence", style="yellow")
+    table.add_column("CVEs",       style="red")
+    table.add_column("Evidence",   style="dim")
+
+    for port in web_ports:
+        wf = port.web_fingerprint
+        table.add_row(
+            str(port.port),
+            wf.app_name,
+            wf.version or "unknown",
+            wf.confidence,
+            str(len(wf.cves)),
+            wf.evidence
+        )
+
+    console.print(table)    

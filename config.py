@@ -85,3 +85,72 @@ CPE_MAP = {
     "postgresql": "cpe:2.3:a:postgresql:postgresql",
     "redis":      "cpe:2.3:a:redis:redis",
 }
+
+#----------------------------------Web-Fingerprinting---------------------------------------#
+
+WEB_SIGNATURES = {
+    "wordpress": {
+        "paths":    ["/wp-login.php", "/wp-admin/", "/wp-json/"],
+        "keywords": ["wp-content", "wp-includes", "WordPress"],
+        "headers":  [],
+        "version_endpoint": "/wp-json/",
+        "version_pattern":  r'"version":"([\d.]+)"',
+        "cpe_base": "cpe:2.3:a:wordpress:wordpress",
+    },
+    "joomla": {
+        "paths":    ["/administrator/", "/components/"],
+        "keywords": ["Joomla!", "joomla"],
+        "headers":  ["x-content-encoded-by"],
+        "version_endpoint": "/administrator/manifests/files/joomla.xml",
+        "version_pattern":  r"<version>([\d.]+)</version>",
+        "cpe_base": "cpe:2.3:a:joomla:joomla",
+    },
+    "drupal": {
+        "paths":    ["/user/login", "/core/misc/drupal.js"],
+        "keywords": ["Drupal", "drupal.org"],
+        "headers":  ["x-generator"],
+        "version_endpoint": "/CHANGELOG.txt",
+        "version_pattern":  r"Drupal ([\d.]+)",
+        "cpe_base": "cpe:2.3:a:drupal:drupal",
+    },
+    "phpmyadmin": {
+        "paths":    ["/phpmyadmin/", "/pma/", "/phpMyAdmin/"],
+        "keywords": ["phpMyAdmin", "PMA_VERSION"],
+        "headers":  [],
+        "version_endpoint": "/phpmyadmin/README",
+        "version_pattern":  r"phpMyAdmin ([\d.]+)",
+        "cpe_base": "cpe:2.3:a:phpmyadmin:phpmyadmin",
+    },
+    "jenkins": {
+        "paths":    ["/jenkins/", "/login?from=%2F"],
+        "keywords": ["Jenkins", "hudson"],
+        "headers":  ["x-jenkins"],
+        "version_endpoint": "/login",
+        "version_pattern":  r"Jenkins ver\. ([\d.]+)",
+        "cpe_base": "cpe:2.3:a:jenkins:jenkins",
+    },
+    "grafana": {
+        "paths":    ["/grafana/", "/login"],
+        "keywords": ["Grafana", "grafana"],
+        "headers":  ["x-grafana-id"],
+        "version_endpoint": "/api/health",
+        "version_pattern":  r'"version":"([\d.]+)"',
+        "cpe_base": "cpe:2.3:a:grafana:grafana",
+    },
+    "tomcat": {
+        "paths":    ["/manager/html", "/host-manager/"],
+        "keywords": ["Apache Tomcat", "Tomcat"],
+        "headers":  [],
+        "version_endpoint": "/",
+        "version_pattern":  r"Apache Tomcat/([\d.]+)",
+        "cpe_base": "cpe:2.3:a:apache:tomcat",
+    },
+    "freepbx": {
+    "paths":    ["/admin/config.php", "/recordings/", "/panel/"],
+    "keywords": ["FreePBX", "Asterisk", "PBX"],
+    "headers":  ["x-freepbx"],
+    "version_endpoint": "/admin/config.php?display=dashboard",
+    "version_pattern":  r"FreePBX ([\d.]+)",
+    "cpe_base": "cpe:2.3:a:freepbx:freepbx",
+    }
+}
