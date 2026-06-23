@@ -1,6 +1,5 @@
 import argparse
 from rich.console import Console
-from rich.markdown import args
 # from rich.table import console
 import config
 from models import ScanResult
@@ -57,10 +56,11 @@ def main():
                 args.target, port,
                 timeout=args.timeout or config.TIMEOUT,
                 debug=debug
-        )
-        if result.service_info:
+            )
+        if result and result.service_info:
             result.cve_entries = map_cves(result.service_info)
-        scan_result.port_results.append(result)
+        if result:
+            scan_result.port_results.append(result)
 
     # print results to terminal
     print_results(scan_result)
