@@ -4,7 +4,7 @@ import os
 load_dotenv()   # reads .env file and loads vars into environment
 
 #-----------------------------Global-Configuration-----------------------------------------#
-
+DEBUGGING      = False #os.getenv("DEBUGGING", "False").lower() == "true"
 CACHE_EXPIRY_DAYS = 7   # re-query NVD after 7 days
 NVD_API_KEY    = os.getenv("NVD_API_KEY", "") #if na then second arg is default
 DEFAULT_PORTS  = [21,22,23,25,53,80,110,135,139,143,443,445,3389,8080]
@@ -36,13 +36,20 @@ DB_PATH        = os.getenv("DB_PATH", "vuln_db.sqlite")
 
 #----------------------------------Service-Detector-----------------------------------------#
 
+PROBE_PATHS = ["/", "/index.html", "/index.php", "/.well-known/"]
+HTTP_PORTS = {80, 443, 8080, 8443, 8008, 3000, 5000, 8888}
+HTTPS_PORTS = {443, 8443}
+
 BANNER_PATTERNS = [
-    (r"SSH-[\d.]+-(.+)",          "SSH"),
-    (r"220[ -].*FTP",             "FTP"),
-    (r"220 .* ESMTP",             "SMTP"),
-    (r"HTTP/[\d.]+",              "HTTP"),
-    (r"RFB [\d.]+",               "VNC"),
-]  
+    (r"SSH-[\d.]+-(.+)",            "SSH"),
+    (r"220[ -].*FTP",               "FTP"),
+    (r"220 .* ESMTP",               "SMTP"),
+    (r"Server:\s*([^\r\n]+)",       "HTTP"),   # ← specific match first
+    (r"X-Powered-By:\s*([^\r\n]+)", "HTTP"),
+    (r"HTTP/[\d.]+",                "HTTP"),   # ← generic fallback last
+    (r"RFB [\d.]+",                 "VNC"),
+]
+  
 PORT_SERVICE_MAP = {
     21:   ("FTP",        ""),
     22:   ("SSH",        ""),
